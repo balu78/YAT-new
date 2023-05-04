@@ -1,5 +1,3 @@
-from tkinter import *
-from tkinter.ttk import *
 from scipy.spatial import distance as dist
 import math
 
@@ -37,44 +35,6 @@ def get_neighbor_count(seg_image, center, radius=1):
                     if (x, y) != (radius, radius) and int(val) != 0
                     and int(val) != int(seg_image[center[0], center[1]]))
         return neighbor_list
-
-def segment_img(seg, cell_tif_image, no_outline_image, use_cache):
-        for i in range(1, int(np.max(seg) + 1)):
-                a = np.where(seg == i)  # somethin bad is happening when i = 4 on my tests
-                min_x = max(np.min(a[0]) - 1, 0)
-                max_x = min(np.max(a[0]) + 1, seg.shape[0])
-                min_y = max(np.min(a[1]) - 1, 0)
-                max_y = min(np.max(a[1]) + 1, seg.shape[1])
-
-                if (not os.path.exists(
-                    f'{output_dir}masks/{base_image_name}-{str(i)}.outline')
-                    or not use_cache):
-                        with open(f'{output_dir}masks/{base_image_name}-{str(i)}.outline', 'w') as csvfile:
-                                csvwriter = csv.writer(csvfile)
-                                csvwriter.writerows(zip(a[0] - min_x, a[1] - min_y))
-
-                cellpair_image = image_outlined[min_x: max_x, min_y:max_y]
-                not_outlined_image = image[min_x: max_x, min_y:max_y]
-                if (not os.path.exists(
-                    f'{output_dir}segmented/{cell_tif_image}')
-                    or not use_cache):  # don't redo things we already have
-                        plt.imsave(
-                            f'{output_dir}segmented/{cell_tif_image}',
-                            cellpair_image,
-                            dpi=600,
-                            format='TIFF',
-                        )
-                        plt.clf()
-                if (not os.path.exists(
-                    f'{output_dir}segmented/{no_outline_image}')
-                    or not use_cache):  # don't redo things we already have
-                        plt.imsave(
-                            f'{output_dir}segmented/{no_outline_image}',
-                            not_outlined_image,
-                            dpi=600,
-                            format='TIFF',
-                        )
-                        plt.clf()
 
 def process_images(use_cache):
     preprocessed_image_directory = f"{output_dir}preprocessed_images/"
